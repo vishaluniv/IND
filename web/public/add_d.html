@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Device</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+  <style>
+    body {
+      
+      font-family: 'Lato', sans-serif;
+      background-image: url("w2.jpg");
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+    .form-container {
+      background-color: #fcfcfc;
+      padding: 30px;
+      max-width: 900px;
+      border-radius: 10px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    input,
+    select {
+      margin-bottom: 10px;
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      box-sizing: border-box;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    nav {
+      display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #333;
+        color: #fff;
+        height: 60px;
+        padding: 0 20px;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+nav li {
+  margin: 0 10px;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+}
+
+
+		
+    label {
+      font-weight: bold;
+    }
+
+    .form-group label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .form-control {
+      border-radius: 5px;
+    }
+    .btn {
+      background-color: #fff;
+      color: #000;
+      border-radius: 50px;
+      border-color: cornflowerblue;
+      padding: 10px 20px;
+      margin-right: 10px;
+    }
+    .btn:hover {
+      background-color: #000;
+      color: #fff;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto;
+      height: 100vh;
+      
+    }
+    .navbar {
+        background-color: transparent !important;
+    }
+  </style>
+</head>
+<body>
+  
+  <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-transparent">
+
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+		  <span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNav" style="margin-top: 20px; margin-left: 1000px;">
+		  <ul class="navbar-nav ml-auto">
+			<li class="nav-item">
+			  <a class="nav-link" style="font-weight: bold; color:#ffffff; " href="/">Home</a>
+			</li>
+      <li class="nav-item">
+			  <a class="nav-link" style="font-weight: bold; color:#ffffff; " href="/d_data">Monitor</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link" style="font-weight: bold; color:#ffffff; " href="/add-device">Add Device</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link" style="font-weight: bold; color:#ffffff; " href="/remove_d">Remove Device</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link" style="font-weight: bold; color:#ffffff; " href="/lighting">Lighting</a>
+			</li>
+      <li class="nav-item">
+			  <a class="nav-link" style="font-weight: bold; color:#ffffff; " href="/acond">Air-Conditioning</a>
+			</li>
+      <li class="nav-item">
+			  <a class="nav-link" style="font-weight: bold; color:#ffffff; " href="/security">Security</a>
+			</li>
+      
+		  </ul>
+		</div>
+	  </nav>
+
+  <div class="container">
+    
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3 form-container">
+        <h1 class="text-center" style="margin-bottom: 50px;">Add Device</h1>
+        <form>
+          <div class="form-group">
+            <label for="name">Device Name:</label>
+            <input type="text" class="form-control" id="new_device_name" name="name" required>
+          </div>
+
+          <div class="form-group">
+            <label for="floor">Floor Level:</label>
+            <select class="form-control" id="new_device_floor" name="floor" required>
+              <option value="">--Select Floor--</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="room">Room Number:</label>
+            <select class="form-control" id="new_device_room" name="room" required>
+              <!-- will be updated based on floor select through data on mongodb database -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="type">Type of Device:</label>
+            <select class="form-control" id="new_device_type" name="type" required>
+              <option value="" style="margin-bottom: 20px;">--Select Type--</option>
+              <option value="1">Lighting Device</option>
+              <option value="2">Air-Conditioning Device</option>
+              <option value="3">Security Device</option>
+
+            </select>
+          </div>
+    
+          <div class="text-center">
+            <button type="button" class="btn" id="add_device_button">Add Device</button>
+            <button type="button" class="btn" onclick="window.history.back()">Go Back</button>
+          </div>
+        </form>
+      </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
+
+

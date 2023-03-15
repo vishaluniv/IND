@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Webpage</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+  <!-- Custom styles -->
+  <style>
+    body {
+        font-family: 'Lato', sans-serif;
+            background-image: url("w2.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+    }
+    .container-custom {
+      margin: 50px;
+      display: flex;
+      justify-content: center;
+      background-color: #ffffff;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0px 0px 10px 0px #bfbfbf;
+        margin-left: 350px;
+        margin-top: 200px;
+        max-width: 1000px;
+    }
+    .navbar {
+        background-color: transparent !important;
+    }
+    table {
+      max-width: 100%;
+    }
+    
+    h1 {
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    nav {
+      display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #333;
+        color: #fff;
+        height: 60px;
+        padding: 0 20px;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+nav li {
+  margin: 0 10px;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+}
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-transparent">
+
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+		  <span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNav" style="margin-top: 20px; margin-left: 800px;">
+		  <ul class="navbar-nav ml-auto">
+			<li class="nav-item">
+			  <a class="nav-link" style="font-weight: bold; color:#ffffff; " href="/">Home</a>
+			</li>
+      <li class="nav-item">
+			  <a class="nav-link" style="font-weight: bold; color:#ffffff; " href="/d_data">Monitor</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link" style="font-weight: bold; color:#ffffff; " href="/add-device">Add Device</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link" style="font-weight: bold; color:#ffffff; " href="/remove_d">Remove Device</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link" style="font-weight: bold; color:#ffffff; " href="/lighting">Lighting</a>
+			</li>
+      <li class="nav-item">
+			  <a class="nav-link" style="font-weight: bold; color:#ffffff; " href="/acond">Air-Conditioning</a>
+			</li>
+      <li class="nav-item">
+			  <a class="nav-link" style="font-weight: bold; color:#ffffff; " href="/security">Security</a>
+			</li>
+      
+		  </ul>
+		</div>
+	  </nav>
+
+  <div class="container-fluid container-custom">
+    <div>
+      <h1>Security</h1>
+      <table id = "security_table" class="table table-striped">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Room</th>
+            <th>Floor</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        
+      </table>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
