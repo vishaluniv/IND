@@ -243,7 +243,7 @@ client.on('connect', () => {
         if (!device) {
           const newDevice = new Sensor({
             Id: data.Id,
-            sensorData: data.Sdata
+            sensorData: data.Sdata            
           });
           await newDevice.save();
           console.log("New device created and added to db");

@@ -17,17 +17,19 @@ const cors = require('cors');
 const port = 5000;
 
 
-
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.setHeader("Cross-Origin-Resource-Policy", "same-site");
+  res.header("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+  res.header("Cross-Origin-Embedder-Policy", "require-corp");
   next();
 });
 
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: 'https://localhost:3000',
   methods: ['GET', 'POST', 'PUT', 'DELETE']
 }));
 
@@ -161,7 +163,7 @@ app.post('/api/lighting', async (req, res) => {
   console.log('name:', name);
   console.log('floor:', floor);
   console.log('room:', room);
-  const device = await AirCond.findOne({ name: name, floor:floor, room: room });
+  const device = await Lighting.findOne({ name: name, floor:floor, room: room });
   if(!device){
     const newDevice = new Lighting({
     name,
