@@ -16,7 +16,6 @@ app.use(helmet({
       scriptSrc: ["'self'", "https://code.highcharts.com/highcharts.js","https://maps.googleapis.com", "https://code.jquery.com", "https://cdnjs.cloudflare.com", "https://stackpath.bootstrapcdn.com", "https://fonts.googleapis.com"],
       connectSrc: ["'self'", "http://localhost:5000", "mongodb+srv://your-mongodb-url"],
       frameAncestors: ["'none'"],
-      // Add the following line to disable the COEP policy
       "Cross-Origin-Embedder-Policy": "require-corp",
       imgSrc: ["'self'", "data:"],
       styleSrc: ["'self'","https://maxcdn.bootstrapcdn.com", "https://stackpath.bootstrapcdn.com", "https://fonts.googleapis.com", "'unsafe-inline'"],
@@ -34,9 +33,6 @@ app.use(function(req, res, next) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   next();
 });
-
-
-
 
 
 const port = 3000;
