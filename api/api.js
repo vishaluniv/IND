@@ -1,3 +1,14 @@
+const express = require('express');
+const fs = require('fs')
+const helmet = require("helmet");
+const https = require('https')
+var sslOptions = {
+key: fs.readFileSync('key.pem'),
+cert: fs.readFileSync('cert.pem'),
+passphrase: 'qwerty'
+};
+
+
 const mongoose = require('mongoose');
 //mongoose.connect('mongosh "mongodb+srv://cluster0.bvvimlw.mongodb.net/myFirstDatabase" --apiVersion 1 --username vishal4855be21 --password v19YnT2Q84DSiD8b')
 //mongoose.connect('mongodb+srv://<vishal4855be21>:<v19YnT2Q84DSiD8b>@cluster0.zfcyx.mongodb.net/mydb', {useNewUrlParser: true, useUnifiedTopology: true });
@@ -28,11 +39,34 @@ app.use(function(req, res, next) {
   next();
 });
 
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "https://code.highcharts.com/highcharts.js","https://maps.googleapis.com", "https://code.jquery.com", "https://cdnjs.cloudflare.com", "https://stackpath.bootstrapcdn.com", "https://fonts.googleapis.com"],
+      connectSrc: ["'self'", "https://3.144.113.114:3000", "mongodb+srv://your-mongodb-url"],
+      frameAncestors: ["'none'"],
+      "Cross-Origin-Embedder-Policy": "require-corp",
+      imgSrc: ["'self'", "data:"],
+      styleSrc: ["'self'","https://maxcdn.bootstrapcdn.com", "https://stackpath.bootstrapcdn.com", "https://fonts.googleapis.com", "'unsafe-inline'"],
+      fontSrc: ["'self'", "https://maxcdn.bootstrapcdn.com","https://stackpath.bootstrapcdn.com","https://fonts.gstatic.com", "https://fonts.googleapis.com", "data:"],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: []
+    },
+    reportOnly: false
+  }
+}));
+
+
 app.use(cors({
   origin: 'https://3.144.113.114:3000',
   methods: ['GET', 'POST', 'PUT', 'DELETE']
 }));
 
+var server = https.createServer(sslOptions, app).listen(port, function(){
+  console.log("Express server listening on port " + port);
+  });
+  
 app.get('/test', (req, res) => {
   res.send('The API is working!');
 });
