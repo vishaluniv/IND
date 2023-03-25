@@ -8,10 +8,7 @@ cert: fs.readFileSync('cert.pem'),
 passphrase: 'qwerty'
 };
 
-
 const mongoose = require('mongoose');
-//mongoose.connect('mongosh "mongodb+srv://cluster0.bvvimlw.mongodb.net/myFirstDatabase" --apiVersion 1 --username vishal4855be21 --password v19YnT2Q84DSiD8b')
-//mongoose.connect('mongodb+srv://<vishal4855be21>:<v19YnT2Q84DSiD8b>@cluster0.zfcyx.mongodb.net/mydb', {useNewUrlParser: true, useUnifiedTopology: true });
 
 mongoose.connect('mongodb+srv://vishal4855be21:PvO1yh5WOougtUQ4@cluster0.bvvimlw.mongodb.net/myFirstDatabase', {useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -21,7 +18,6 @@ const Security = require('./models/security');
 const AirCond = require('./models/acond');
 const FloorRoom = require('./models/floor-room');
 
-const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const cors = require('cors');
@@ -66,7 +62,7 @@ app.use(cors({
 var server = https.createServer(sslOptions, app).listen(port, function(){
   console.log("Express server listening on port " + port);
   });
-  
+
 app.get('/test', (req, res) => {
   res.send('The API is working!');
 });
