@@ -14,7 +14,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const cors = require('cors');
-const port = 5000;
+const port = process.env.port || 5000;
 
 
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -29,7 +29,7 @@ app.use(function(req, res, next) {
 });
 
 app.use(cors({
-  origin: 'https://localhost:3000',
+  origin: 'https://3.144.113.114:3000',
   methods: ['GET', 'POST', 'PUT', 'DELETE']
 }));
 
