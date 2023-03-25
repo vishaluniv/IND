@@ -35,7 +35,7 @@ app.use(function(req, res, next) {
 });
 
 
-const port = 80;
+const port = 3000;
 const base = `${__dirname}/public`;
 
 app.use(express.static('public'));
