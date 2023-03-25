@@ -29,7 +29,7 @@ app.use(function(req, res, next) {
 });
 
 app.use(cors({
-  origin: 'https://localhost:3000',
+  origin: 'https://3.144.113.114:3000',
   methods: ['GET', 'POST', 'PUT', 'DELETE']
 }));
 
