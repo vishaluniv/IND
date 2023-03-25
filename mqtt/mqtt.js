@@ -1,7 +1,15 @@
 const mqtt = require('mqtt');
 const express = require('express');
-const SerialPort = require('serialport/bindings');
-const Readline = require('@serialport/parser-readline');
+const fs = require('fs')
+const helmet = require("helmet");
+const https = require('https')
+var sslOptions = {
+key: fs.readFileSync('key.pem'),
+cert: fs.readFileSync('cert.pem'),
+passphrase: 'qwerty'
+};
+// const SerialPort = require('serialport/bindings');
+// const Readline = require('@serialport/parser-readline');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const Sensor = require('./models/sensor');
@@ -9,16 +17,35 @@ const Lighting = require('./models/lighting');
 const Security = require('../api/models/security');
 const AirCond = require('./models/acond');
 const app = express();
-app.use(express.static('public'));
-const sport = new SerialPort('COM3', { baudRate: 9600 });
-const parser = sport.pipe(new Readline({ delimiter: '\r\n' }));
+// app.use(express.static('public'));
+// const sport = new SerialPort('COM3', { baudRate: 9600 });
+// const parser = sport.pipe(new Readline({ delimiter: '\r\n' }));
 
 mongoose.connect('mongodb+srv://vishal4855be21:PvO1yh5WOougtUQ4@cluster0.bvvimlw.mongodb.net/myFirstDatabase', {useNewUrlParser: true, useUnifiedTopology: true });
 
-app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "https://code.highcharts.com/highcharts.js","https://maps.googleapis.com", "https://code.jquery.com", "https://cdnjs.cloudflare.com", "https://stackpath.bootstrapcdn.com", "https://fonts.googleapis.com"],
+      connectSrc: ["'self'", "https://18.116.43.166:5000", "mongodb+srv://your-mongodb-url"],
+      frameAncestors: ["'none'"],
+      "Cross-Origin-Embedder-Policy": "require-corp",
+      imgSrc: ["'self'", "data:"],
+      styleSrc: ["'self'","https://maxcdn.bootstrapcdn.com", "https://stackpath.bootstrapcdn.com", "https://fonts.googleapis.com", "'unsafe-inline'"],
+      fontSrc: ["'self'", "https://maxcdn.bootstrapcdn.com","https://stackpath.bootstrapcdn.com","https://fonts.gstatic.com", "https://fonts.googleapis.com", "data:"],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: []
+    },
+    reportOnly: false
+  }
+}));
+
+app.use(function(req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  next();
 });
 
 
@@ -32,6 +59,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+
+var server = https.createServer(sslOptions, app).listen(port, function(){
+  console.log("Express server listening on port " + port);
+  });
+
+  app.get('/test', (req, res) => {
+    res.send('The MQTT API is working!');
+  });
 
 const client = mqtt.connect("mqtt://broker.hivemq.com:1883", {encoding: 'utf8'});
 
@@ -54,17 +89,17 @@ client.on('connect', () => {
     // });
   });
 
-  parser.on('data', (data) => {
-    console.log("reading from serial port");
-    const topic = '/sensorData';
-    let Id = '1';
-    let Sdata = [0, 0, 0, 0];
-    Sdata = data.split(',').map(parseFloat);
-    const message = JSON.stringify({ Id, Sdata });
-    client.publish(topic, message, () => {
-      console.log('published new message');
-    });
-  });
+  // parser.on('data', (data) => {
+  //   console.log("reading from serial port");
+  //   const topic = '/sensorData';
+  //   let Id = '1';
+  //   let Sdata = [0, 0, 0, 0];
+  //   Sdata = data.split(',').map(parseFloat);
+  //   const message = JSON.stringify({ Id, Sdata });
+  //   client.publish(topic, message, () => {
+  //     console.log('published new message');
+  //   });
+  // });
 
   client.on('message', async (topic, message) => {
 
@@ -311,6 +346,3 @@ app.put('/sensor-data', (req, res) => {
     // console.log(pref_d1);
   });
 
-app.listen(port, () => { 
-    console.log(`listening on port ${port}`);
-});
