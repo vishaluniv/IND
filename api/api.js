@@ -8,19 +8,11 @@ cert: fs.readFileSync('cert.pem'),
 passphrase: 'qwerty'
 };
 
-const mongoose = require('mongoose');
 
-mongoose.connect('mongodb+srv://vishal4855be21:PvO1yh5WOougtUQ4@cluster0.bvvimlw.mongodb.net/myFirstDatabase', {useNewUrlParser: true, useUnifiedTopology: true });
-
-const Device = require('./models/device'); 
-const Lighting = require('./models/lighting');
-const Security = require('./models/security'); 
-const AirCond = require('./models/acond');
-const FloorRoom = require('./models/floor-room');
 
 const bodyParser = require('body-parser');
 const app = express();
-const cors = require('cors');
+// const cors = require('cors');
 const port = process.env.port || 5000;
 
 
@@ -32,6 +24,7 @@ app.use(function(req, res, next) {
   res.setHeader("Cross-Origin-Resource-Policy", "same-site");
   res.header("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
   res.header("Cross-Origin-Embedder-Policy", "require-corp");
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   next();
 });
 
@@ -52,12 +45,20 @@ app.use(helmet({
     reportOnly: false
   }
 }));
+const mongoose = require('mongoose');
 
+mongoose.connect('mongodb+srv://vishal4855be21:PvO1yh5WOougtUQ4@cluster0.bvvimlw.mongodb.net/myFirstDatabase', {useNewUrlParser: true, useUnifiedTopology: true });
 
-app.use(cors({
-  origin: 'https://3.144.113.114:3000',
-  methods: ['GET', 'POST', 'PUT', 'DELETE']
-}));
+const Device = require('./models/device'); 
+const Lighting = require('./models/lighting');
+const Security = require('./models/security'); 
+const AirCond = require('./models/acond');
+const FloorRoom = require('./models/floor-room');
+
+// app.use(cors({
+//   origin: 'https://3.144.113.114:3000',
+//   methods: ['GET', 'POST', 'PUT', 'DELETE']
+// }));
 
 var server = https.createServer(sslOptions, app).listen(port, function(){
   console.log("Express server listening on port " + port);
@@ -329,9 +330,3 @@ app.post('/devices', (req, res) => {
   });
 });
 
-
-
-
-app.listen(port, () => {
-  console.log(`listening on port ${port}`);
-});
