@@ -8,7 +8,6 @@ cert: fs.readFileSync('cert.pem'),
 passphrase: 'qwerty'
 };
 
-
 var app = express();
 
 app.use(helmet({
@@ -16,7 +15,7 @@ app.use(helmet({
     directives: {
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "https://code.highcharts.com/highcharts.js","https://maps.googleapis.com", "https://code.jquery.com", "https://cdnjs.cloudflare.com", "https://stackpath.bootstrapcdn.com", "https://fonts.googleapis.com"],
-      connectSrc: ["'self'", "https://18.116.43.166:5000", "mongodb+srv://your-mongodb-url"],
+      connectSrc: ["'self'", "https://localhost:5000", "mongodb+srv://your-mongodb-url"],
       frameAncestors: ["'none'"],
       "Cross-Origin-Embedder-Policy": "require-corp",
       imgSrc: ["'self'", "data:"],
@@ -35,7 +34,6 @@ app.use(function(req, res, next) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   next();
 });
-
 
 const port = 3000;
 const base = `${__dirname}/public`;

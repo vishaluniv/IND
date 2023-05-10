@@ -5,5 +5,6 @@ module.exports = mongoose.model('AirCond', new mongoose.Schema({
   floor: String,
   room: String,
   status: Boolean,
-  sensorData: Array
+  humid: Array,
+  gas: Array
 }, { collection : 'acond' }));

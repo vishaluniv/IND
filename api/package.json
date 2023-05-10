@@ -4,8 +4,9 @@
   "description": "",
   "main": "api.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": " nodemon api.js"
+    "test": "jest",
+    "start": " nodemon api.js",
+    "doc": "apidoc -i ../api -o public/generated-docs/ -e node_modules/"
   },
   "author": "",
   "license": "ISC",
@@ -18,6 +19,8 @@
     "render": "^0.1.4"
   },
   "devDependencies": {
+    "axios": "^1.3.4",
+    "jest": "^29.5.0",
     "nodemon": "^2.0.21"
   }
 }

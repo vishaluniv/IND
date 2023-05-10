@@ -1,4 +1,7 @@
 const mqtt = require('mqtt');
+const { SerialPort } = require('serialport')
+const { ReadlineParser } = require('@serialport/parser-readline')
+
 const express = require('express');
 const fs = require('fs')
 const helmet = require("helmet");
@@ -8,6 +11,7 @@ key: fs.readFileSync('key.pem'),
 cert: fs.readFileSync('cert.pem'),
 passphrase: 'qwerty'
 };
+
 // const SerialPort = require('serialport/bindings');
 // const Readline = require('@serialport/parser-readline');
 const mongoose = require('mongoose');
@@ -21,14 +25,15 @@ const app = express();
 // const sport = new SerialPort('COM3', { baudRate: 9600 });
 // const parser = sport.pipe(new Readline({ delimiter: '\r\n' }));
 
-mongoose.connect('mongodb+srv://vishal4855be21:PvO1yh5WOougtUQ4@cluster0.bvvimlw.mongodb.net/myFirstDatabase', {useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://vishal4855be21:g8Syw62NPqqVS5p2@cluster0.bvvimlw.mongodb.net/myFirstDatabase', {useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use(helmet({
+
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "https://code.highcharts.com/highcharts.js","https://maps.googleapis.com", "https://code.jquery.com", "https://cdnjs.cloudflare.com", "https://stackpath.bootstrapcdn.com", "https://fonts.googleapis.com"],
-      connectSrc: ["'self'", "https://18.116.43.166:5000", "mongodb+srv://your-mongodb-url"],
+      connectSrc: ["'self'", "https://localhost:5000", "mongodb+srv://your-mongodb-url"],
       frameAncestors: ["'none'"],
       "Cross-Origin-Embedder-Policy": "require-corp",
       imgSrc: ["'self'", "data:"],
@@ -37,8 +42,10 @@ app.use(helmet({
       objectSrc: ["'none'"],
       upgradeInsecureRequests: []
     },
+
     reportOnly: false
   }
+
 }));
 
 app.use(function(req, res, next) {
@@ -47,6 +54,26 @@ app.use(function(req, res, next) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   next();
 });
+
+
+
+const comPort1 = new SerialPort({
+  path: 'COM12',
+  baudRate: 9600,
+  dataBits: 8,
+  stopBits: 1,
+  parity: 'none',
+  });
+  const parser = comPort1.pipe(new ReadlineParser({ delimiter: '\r\n' }));
+
+// const parser = comPort1.pipe(new ReadlineParser({ delimiter: '\r\n' }));
+  // Read the port data
+// port1.on("open", () => {
+//   console.log('serial port open');
+// });
+// parser.on('data', data =>{
+//   console.log('got word from arduino:', data);
+// });
 
 
 var pref_d1 = {};
@@ -71,24 +98,73 @@ var server = https.createServer(sslOptions, app).listen(port, function(){
 const client = mqtt.connect("mqtt://broker.hivemq.com:1883", {encoding: 'utf8'});
 
 client.on('connect', () => {
-    client.subscribe('/turnLight');
+
+    client.subscribe('/sensorData');
     console.log('mqtt connected');
    
     //testing
 
-    // const name = 'Light3';
-    // const room = '11';
-    // const floor = '3';
+    // const name = 'Lighttt';
+    // const room = '7';
+    // const floor = '2';
 
-    // // const Sdata = [20,1,40,0];
-    // const topic = `/turnLight`;
-    // const message = JSON.stringify({ name, room, floor});
+    // const Sdata = [20,1,40,10];//save the serial port stuff
+    // const topic = `/sensorData`;
+    // const message = JSON.stringify({ name, room, floor, Sdata});
   
     // client.publish(topic, message, () => {
     //   console.log('published new message');
     // });
+
   });
 
+  const values = []; // Array to store the values
+
+  const gasValues = []; // Array to store temperature values
+  const humidityValues = []; // Array to store humidity values
+  
+  let count = 0; // Counter to keep track of the number of values read
+  
+  parser.on('data', (data) => {
+    
+    if (data.startsWith('G')) {
+      const temperature = parseInt(data.substring(1)); // Parse the temperature value
+      gasValues.push(temperature); // Add the temperature value to the array
+    } else if (data.startsWith('H')) {
+      const humidity = parseInt(data.substring(1)); // Parse the humidity value
+      humidityValues.push(humidity); // Add the humidity value to the array
+    }
+  
+    count++;
+  
+    // Check if 20 values have been read (10 temperature values and 10 humidity values)
+    if (count === 10) {
+
+      const name = 'AAACC';
+      const room = '3';
+      const floor = '1';
+      const topic = "/sensorData"
+      const message = JSON.stringify({
+        name,
+        room,
+        floor,
+        gasValues,
+        humidityValues
+      });
+  
+      console.log(message);
+      client.publish(topic, message);
+      console.log("Data sent to MQTT");
+  
+      count = 0;
+      gasValues.length = 0;
+      humidityValues.length = 0;
+
+    }
+
+  });
+  
+  
   // parser.on('data', (data) => {
   //   console.log("reading from serial port");
   //   const topic = '/sensorData';
@@ -255,6 +331,7 @@ client.on('connect', () => {
       console.log("mhm");
 
       try {
+
         const device = await Lighting.findOne({name: data.name, floor: data.floor, room: data.room});
         if(!device){
 
@@ -269,32 +346,36 @@ client.on('connect', () => {
       }
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    
     else if (topic == '/sensorData') {
       const data = JSON.parse(message);
       console.log(data);
       console.log("I am here");
+
       try {
-        const device = await Sensor.findOne({ "Id": data.Id });
-        if (!device) {
-          const newDevice = new Sensor({
-            Id: data.Id,
-            sensorData: data.Sdata            
-          });
-          await newDevice.save();
-          console.log("New device created and added to db");
-        } else {
-          device.sensorData = data.Sdata;
+
+          const device = await AirCond.findOne({ name: data.name, floor: data.floor, room: data.room  });
+          device.gas = data.gasValues;
+          device.humid = data.humidityValues;
+          console.log('uploaded gas data:', device.gas);
+          console.log('uploaded humidity data:', device.humid);
+          
           await device.save();
           console.log("Sensor data updated for existing device in db");
-        }
+        
       } catch (err) {
         console.log(err);
       }
     }
   });
   
-  
-  
+
   // console.log('Received POST request to /api/lighting');
   // console.log('Id:', 2);
   // console.log('sensorData:', [1,2,3,4]);
@@ -325,7 +406,7 @@ app.put('/sensor-data', (req, res) => {
     const Sdata = [1,2,3,4];
     const topic = `/sensorData`;
     const message = JSON.stringify({ Id, Sdata});
-  
+
     client.publish(topic, message, () => {
       res.send('published new message');
     });

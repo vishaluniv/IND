@@ -1,5 +1,5 @@
-const API_URL = 'http://18.116.43.166:5000/api';
-const MQTT_URL = 'http://localhost:5001/mqtt';
+const API_URL = 'https://localhost:5000/api';
+const MQTT_URL = 'https://localhost:5001/mqtt';
 
 
 console.log('Before change event');
@@ -310,11 +310,11 @@ $('#d_data_button').on('click', function() {
   var name = $('#d_data_device').val();
   if ($('#d_data_room') != undefined && $('#d_data_floor') != undefined && ('#d_data_type') != undefined && ('#d_data_device') != undefined) {
     $.ajax({
-    url: `${API_URL}/data?floor=${floor}&type=${type}&room=${room}&name=${name}`,
+    url: `${API_URL}/th?floor=${floor}&room=${room}&name=${name}`,
     method: 'GET',
     success: (data) => {
       $('#dataContainer').empty();
-      $('#dataContainer').append(`<h2>Device Data</h2><label>Name: ${name}</label><br><label>Type: ${type}</label><br><label>Floor: ${floor}</label><br><label>Room: ${room}</label><br><label>Data: ${data}</label><br><br>`);
+      $('#dataContainer').append(`<h2>Device Data</h2><label>Name: ${name}</label><br><label>Type: ${type}</label><br><label>Floor: ${floor}</label><br><label>Room: ${room}</label><br><label>Gas Data: ${data.gas}</label><br><br><label>Humidity Data: ${data.humid}</label><br>`);
       var chartOptions = {
         chart: {
           type: 'line'
@@ -331,9 +331,14 @@ $('#d_data_button').on('click', function() {
           }
         },
         series: [{
-          name: name,
-          data: data
-        }]
+          name: 'Humidity',
+          data: data.humid
+        },
+        {
+          name: 'Gas',
+          data: data.gas
+        }
+      ]
       };
       $(document).ready(function() {      $('#graph').highcharts(chartOptions);
     });

@@ -10,7 +10,6 @@ passphrase: 'qwerty'
 
 const bodyParser = require('body-parser');
 const app = express();
-// const cors = require('cors');
 const port = process.env.port || 5000;
 
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -30,7 +29,7 @@ app.use(helmet({
     directives: {
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "https://code.highcharts.com/highcharts.js","https://maps.googleapis.com", "https://code.jquery.com", "https://cdnjs.cloudflare.com", "https://stackpath.bootstrapcdn.com", "https://fonts.googleapis.com"],
-      connectSrc: ["'self'", "https://3.144.113.114:3000", "mongodb+srv://your-mongodb-url"],
+      connectSrc: ["'self'", "https://localhost:3000", "mongodb+srv://your-mongodb-url"],
       frameAncestors: ["'none'"],
       "Cross-Origin-Embedder-Policy": "require-corp",
       imgSrc: ["'self'", "data:"],
@@ -42,20 +41,16 @@ app.use(helmet({
     reportOnly: false
   }
 }));
+
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb+srv://vishal4855be21:PvO1yh5WOougtUQ4@cluster0.bvvimlw.mongodb.net/myFirstDatabase', {useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://vishal4855be21:g8Syw62NPqqVS5p2@cluster0.bvvimlw.mongodb.net/myFirstDatabase', {useNewUrlParser: true, useUnifiedTopology: true });
 
 const Device = require('./models/device'); 
 const Lighting = require('./models/lighting');
 const Security = require('./models/security'); 
 const AirCond = require('./models/acond');
 const FloorRoom = require('./models/floor-room');
-
-// app.use(cors({
-//   origin: 'https://3.144.113.114:3000',
-//   methods: ['GET', 'POST', 'PUT', 'DELETE']
-// }));
 
 var server = https.createServer(sslOptions, app).listen(port, function(){
   console.log("Express server listening on port " + port);
@@ -65,6 +60,42 @@ app.get('/test', (req, res) => {
   res.send('The API is working!');
 });
 
+
+
+/**
+* @api {get} /api/devices AllDevices An array of all devices
+* @apiGroup Device
+* @apiSuccessExample {json} Success-Response:
+*  [
+*    {
+*      "_id": "dsohsdohsdofhsofhosfhsofh",
+*      "name": "Mary's iPhone",
+*      "user": "mary",
+*      "sensorData": [
+*        {
+*          "ts": "1529542230",
+*          "temp": 12,
+*          "loc": {
+*            "lat": -37.84674,
+*            "lon": 145.115113
+*          }
+*        },
+*        {
+*          "ts": "1529572230",
+*          "temp": 17,
+*          "loc": {
+*            "lat": -37.850026,
+*            "lon": 145.117683
+*          }
+*        }
+*      ]
+*    }
+*  ]
+* @apiErrorExample {json} Error-Response:
+*  {
+*    "User does not exist"
+*  }
+*/
 
 app.get('/api/rooms', async (req, res) => {
 
@@ -129,6 +160,7 @@ app.get('/api/data', async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });
   }
+  
 });
 
 app.delete('/api/remove', async (req, res) => {
@@ -154,8 +186,6 @@ app.delete('/api/remove', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-
 
 app.get('/api/lighting', async (req, res) => {
   try {
@@ -211,6 +241,31 @@ app.post('/api/lighting', async (req, res) => {
   }
   }
   
+});
+
+app.get('/api/th', async (req,res)=>{
+  try {
+      const name = req.query.name;
+      const room = req.query.room;
+      const floor = req.query.floor;
+
+      // let temp=[];
+      // let humid=[];
+
+      const devices = await AirCond.find({ name: name, room: room, floor: floor });
+
+      gas = devices.map((item) => item.gas).flat();
+      humid = devices.map((item) => item.humid).flat();
+
+      const response = {
+        gas: gas,
+        humid: humid
+      };
+  
+      res.json(response);
+  } catch (error) {
+      console.error(error);
+  }
 });
 
 app.post('/api/security', async (req, res) => {
