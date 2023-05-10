@@ -1,6 +1,8 @@
 const express = require('express');
 const fs = require('fs')
 const helmet = require("helmet");
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 const https = require('https')
 var sslOptions = {
 key: fs.readFileSync('key.pem'),
@@ -23,6 +25,20 @@ app.use(function(req, res, next) {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   next();
 });
+
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Smart Building',
+      version: '1.0.0',
+      description: 'API documentation generated using Swagger',
+    },
+  },
+  apis: ['./api.js'], // Path to your API route files
+};
+const swaggerSpec = swaggerJSDoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(helmet({
   contentSecurityPolicy: {
@@ -63,39 +79,23 @@ app.get('/test', (req, res) => {
 
 
 /**
-* @api {get} /api/devices AllDevices An array of all devices
-* @apiGroup Device
-* @apiSuccessExample {json} Success-Response:
-*  [
-*    {
-*      "_id": "dsohsdohsdofhsofhosfhsofh",
-*      "name": "Mary's iPhone",
-*      "user": "mary",
-*      "sensorData": [
-*        {
-*          "ts": "1529542230",
-*          "temp": 12,
-*          "loc": {
-*            "lat": -37.84674,
-*            "lon": 145.115113
-*          }
-*        },
-*        {
-*          "ts": "1529572230",
-*          "temp": 17,
-*          "loc": {
-*            "lat": -37.850026,
-*            "lon": 145.117683
-*          }
-*        }
-*      ]
-*    }
-*  ]
-* @apiErrorExample {json} Error-Response:
-*  {
-*    "User does not exist"
-*  }
-*/
+ * @swagger
+ * /api/rooms:
+ *   get:
+ *     summary: Get Rooms from a floor
+ *     tags: [Rooms]
+ *     parameters:
+ *       - floor: String
+ *         schema:
+ *           floor: string
+ *           rooms: Array
+ *     responses:
+ *       200:
+ *         description: Successful operation
+ *       404:
+ *         description: User not found
+ */
+
 
 app.get('/api/rooms', async (req, res) => {
 
@@ -108,6 +108,33 @@ app.get('/api/rooms', async (req, res) => {
     console.error(err);
   }
 });
+
+
+
+app.get('/swagger.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
+});
+
+/**
+ * @swagger
+ * /api/remove:
+ *   get:
+ *     summary: Get all devices of type, room, floor
+ *     tags: [devices]
+ *     parameters:
+ *       - type: string
+ *         floor: string
+ *         room: string
+ *         schema:
+ *           floor: string
+ *           rooms: Array
+ *     responses:
+ *       200:
+ *         description: Successful operation
+ *       404:
+ *         description: User not found
+ */
 
 app.get('/api/remove', async (req, res) => {
   try {
@@ -134,6 +161,29 @@ app.get('/api/remove', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+/**
+ * @swagger
+ * /api/data:
+ *   get:
+ *     summary: Get data from a device
+ *     tags: [data]
+ *     parameters:
+ *       - name: String
+ *         type: string
+ *         floor: string
+ *         room: string
+ *         schema:
+ *           name: string
+ *           status: string
+ *           floor: string
+ *           rooms: Array
+ *     responses:
+ *       200:
+ *         description: Successful operation
+ *       404:
+ *         description: User not found
+ */
 
 app.get('/api/data', async (req, res) => {
   try {
@@ -163,6 +213,30 @@ app.get('/api/data', async (req, res) => {
   
 });
 
+/**
+ * @swagger
+ * /api/remove:
+ *   delete:
+ *     summary: Delete device from DB
+ *     tags: [device]
+ *     parameters:
+ *       - device: String
+ *         type: string
+ *         floor: string
+ *         room: string
+ *         schema:
+ *           name: string
+ *           status: string
+ *           floor: string
+ *           rooms: Array
+ *     responses:
+ *       200:
+ *         description: Successful operation
+ *       404:
+ *         description: User not found
+ */
+
+
 app.delete('/api/remove', async (req, res) => {
   try {
     const type = req.body.type;
@@ -187,6 +261,27 @@ app.delete('/api/remove', async (req, res) => {
   }
 });
 
+
+/**
+ * @swagger
+ * /api/lighting:
+ *   get:
+ *     summary: get all lighting devices
+ *     tags: [data]
+ *     parameters:
+ *       - 
+ *         schema:
+ *           name: string
+ *           status: string
+ *           floor: string
+ *           rooms: Array
+ *     responses:
+ *       200:
+ *         description: Successful operation
+ *       404:
+ *         description: User not found
+ */
+
 app.get('/api/lighting', async (req, res) => {
   try {
     const lightingData = await Lighting.find({});
@@ -196,6 +291,26 @@ app.get('/api/lighting', async (req, res) => {
   }
 });
 
+
+/**
+ * @swagger
+ * /api/data:
+ *   get:
+ *     summary: get all security devices
+ *     tags: [security]
+ *     parameters:
+ *       - 
+ *         schema:
+ *           name: string
+ *           status: string
+ *           floor: string
+ *           rooms: Array
+ *     responses:
+ *       200:
+ *         description: Successful operation
+ *       404:
+ *         description: User not found
+ */
 app.get('/api/security', async (req, res) => {
   try {
     const lightingData = await Security.find({});
@@ -205,6 +320,25 @@ app.get('/api/security', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/aircond:
+ *   get:
+ *     summary: Get all data from airconditioning devices
+ *     tags: [AC]
+ *     parameters:
+ *       - 
+ *         schema:
+ *           name: string
+ *           status: string
+ *           floor: string
+ *           rooms: Array
+ *     responses:
+ *       200:
+ *         description: Successful operation
+ *       404:
+ *         description: User not found
+ */
 app.get('/api/aircond', async (req, res) => {
   try {
     const lightingData = await AirCond.find({});
@@ -213,6 +347,28 @@ app.get('/api/aircond', async (req, res) => {
     res.status(500).send('Server error');
   }
 });
+
+/**
+ * @swagger
+ * /api/lighting:
+ *   post:
+ *     summary: Get data from a device
+ *     tags: [data]
+ *     parameters:
+ *       - name: String
+ *         floor: string
+ *         room: string
+ *         schema:
+ *           name: string
+ *           status: string
+ *           floor: string
+ *           rooms: Array
+ *     responses:
+ *       200:
+ *         description: Successful operation
+ *       404:
+ *         description: User not found
+ */
 
 app.post('/api/lighting', async (req, res) => {
   const { name, floor, room } = req.body;
@@ -243,6 +399,30 @@ app.post('/api/lighting', async (req, res) => {
   
 });
 
+/**
+ * @swagger
+ * /api/data:
+ *   get:
+ *     summary: Get data from a device
+ *     tags: [data]
+ *     parameters:
+ *       - name: String
+ *         type: string
+ *         floor: string
+ *         room: string
+ *         schema:
+ *           name: string
+ *           status: string
+ *           floor: string
+ *           gas: Array
+ *           humid: Array
+ *     responses:
+ *       200:
+ *         description: Successful operation
+ *       404:
+ *         description: User not found
+ */
+
 app.get('/api/th', async (req,res)=>{
   try {
       const name = req.query.name;
@@ -267,6 +447,27 @@ app.get('/api/th', async (req,res)=>{
       console.error(error);
   }
 });
+
+/**
+ * @swagger
+ * /api/security:
+ *   post:
+ *     summary: add a new security device
+ *     tags: [data]
+ *     parameters:
+ *       - name: String
+ *         floor: string
+ *         room: string
+ *         schema:
+ *           name: string
+ *           status: string
+ *           
+ *     responses:
+ *       200:
+ *         description: Successful operation
+ *       404:
+ *         description: User not found
+ */
 
 app.post('/api/security', async (req, res) => {
   const { name, floor, room } = req.body;
@@ -298,6 +499,28 @@ app.post('/api/security', async (req, res) => {
   
 });
 
+/**
+ * @swagger
+ * /api/aircond:
+ *   post:
+ *     summary: Get airconditioning device from aircond
+ *     tags: [AC]
+ *     parameters:
+ *       - name: String
+ *         floor: string
+ *         room: string
+ *         schema:
+ *           name: string
+ *           status: string
+ *           floor: string
+ *           rooms: Array
+ *     responses:
+ *       200:
+ *         description: Successful operation
+ *       404:
+ *         description: User not found
+ */
+
 app.post('/api/aircond', async (req, res) => {
   const { name, floor, room } = req.body;
   
@@ -312,7 +535,8 @@ app.post('/api/aircond', async (req, res) => {
     floor,
     room,
     status: false,
-    sensorData: [3,5,6,7]
+    gas: [2,6,7,8,1],
+    humid: [3,5,6,7]
   });
 
   try {

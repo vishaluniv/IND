@@ -16,7 +16,9 @@
     "express": "^4.18.2",
     "helmet": "^6.0.1",
     "mongoose": "^7.0.1",
-    "render": "^0.1.4"
+    "render": "^0.1.4",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^4.6.3"
   },
   "devDependencies": {
     "axios": "^1.3.4",
